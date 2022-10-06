@@ -1,0 +1,30 @@
+version: '3.4'
+
+networks:
+  backend:
+
+services:
+  catalogdb:
+    container_name: catalog-db
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=P@ssword123#
+    networks:
+      - backend
+    ports:
+      - 8001:1433
+  demo.inventory.command.catalog.api:
+    container_name: command-catalog-api
+    image: ${DOCKER_REGISTRY-}demoinventorycommandcatalogapi
+    build:
+      context: .
+      dockerfile: Demo.Inventory.Command.Catalog.Api/Dockerfile
+    networks:
+      - backend
+    ports:
+      - 8002:80
+    environment:
+      - DB_HOST=catalogdb
+      - DB_NAME=Catalog
+      - DB_SA_PASSWORD=P@ssword123#
